@@ -1,0 +1,9 @@
+{
+  "name": "geekyjavascript.com",
+  "version": "1.0.0",
+  "description": "Website where all the information related to javascript",
+  "main": "index.js",
+  "author": "Saurabh Ghosh",
+  "license": "MIT",
+  "private": true
+}
