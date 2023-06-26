@@ -5,5 +5,10 @@
   "main": "index.js",
   "author": "Saurabh Ghosh",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "workspaces": [
+    "website", 
+    "backend",
+    "framework"
+ ]
 }
