@@ -8,7 +8,6 @@
   "private": true,
   "workspaces": [
     "website", 
-    "backend",
-    "framework"
+    "backend"
  ]
 }
