@@ -8,6 +8,7 @@
   "private": true,
   "workspaces": [
     "website", 
-    "backend"
+    "backend",
+    "admin"
  ]
 }

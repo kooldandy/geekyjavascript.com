@@ -4,8 +4,6 @@ import databaseConfig from './config';
 
 const dbConfig = databaseConfig().database;
 
-console.log('--------------------------------', dbConfig);
-
 @Module({
   imports: [
     // MongooseModule.forRoot(dbConfig.host, {
