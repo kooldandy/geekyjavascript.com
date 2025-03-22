@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as compression from 'compression';
+import { SwaggerConfig } from './modules/swagger/swagger.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,15 +26,8 @@ async function bootstrap() {
   // Use Winston logger
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
-  // Swagger setup
-  const config = new DocumentBuilder()
-    .setTitle('Blog API')
-    .setDescription('The blog API description')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  // Setup Swagger
+  SwaggerConfig.setup(app);
 
   await app.listen(3000);
 }
