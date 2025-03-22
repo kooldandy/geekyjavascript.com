@@ -22,10 +22,10 @@ export default function Autocomplete() {
   const [pickerItems, setPickerItems] = React.useState(countries);
   const [selectedItems, setSelectedItems] = React.useState<TagTypes[]>([]);
 
-    const handleCreateItem = (item: TagTypes) => {
-      setPickerItems((curr) => [...curr, item]);
-      setSelectedItems((curr) => [...curr, item]);
-    };
+  const handleCreateItem = (item: TagTypes) => {
+    setPickerItems((curr) => [...curr, item]);
+    setSelectedItems((curr) => [...curr, item]);
+  };
 
   const handleSelectedItemsChange = (selectedItems: TagTypes[]) => {
     if (selectedItems) {
@@ -37,10 +37,10 @@ export default function Autocomplete() {
     <CUIAutoComplete
       hideToggleButton={true}
       disableCreateItem={true}
-      listStyleProps={{position:'absolute', 'zIndex': '100', width: '100%'}}
+      listStyleProps={{ position: "absolute", zIndex: "100", width: "100%" }}
       label=""
       placeholder="Type a Hashtags"
-        onCreateItem={handleCreateItem}
+      onCreateItem={handleCreateItem}
       items={pickerItems}
       tagStyleProps={{
         rounded: "full",

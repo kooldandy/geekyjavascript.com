@@ -116,12 +116,12 @@ const DashboardPage = () => {
           Write Blog
         </Heading>
         <Stack spacing={3}>
-          <Editor getData={getData} />
           <FormControl mr="5%">
             <FormLabel htmlFor="blog-header" fontWeight={"normal"}>
               Header
             </FormLabel>
             <Input
+              tabIndex={1}
               required
               id="blog-header"
               placeholder="Enter the heading of the blog"
@@ -139,6 +139,13 @@ const DashboardPage = () => {
               focusBorderColor="lime"
             />
           </FormControl>
+          <FormControl mr="5%">
+            <FormLabel htmlFor="blog-keywords" fontWeight={"normal"}>
+              Hashtag
+            </FormLabel>
+            <Autocomplete />
+          </FormControl>
+          <Editor getData={getData} />
           <FormControl mr="5%">
             <FormLabel htmlFor="blog-desc" fontWeight={"normal"}>
               Description(SEO)
@@ -161,13 +168,6 @@ const DashboardPage = () => {
               focusBorderColor="lime"
             />
           </FormControl>
-          <FormControl mr="5%">
-            <FormLabel htmlFor="blog-keywords" fontWeight={"normal"}>
-              Hashtag
-            </FormLabel>
-           <Autocomplete/>
-          </FormControl>
-         
         </Stack>
 
         <EditorView blog={blog}></EditorView>

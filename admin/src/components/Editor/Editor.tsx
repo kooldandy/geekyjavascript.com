@@ -9,7 +9,7 @@ import styles from './Editor.module.css';
 import "react-quill/dist/quill.snow.css";
 import "highlight.js/styles/atom-one-dark.css";
 import "quill-emoji/dist/quill-emoji.css";
-import "quill-mention/dist/quill.mention.css";
+// import "quill-mention/dist/quill.mention.css";
 
 
 // configure hljs
@@ -17,10 +17,10 @@ hljs.configure({
   languages: ["javascript"],
 });
 
-const hashValues = [
-  { id: 3, value: "Fredrik Sundqvist 2" },
-  { id: 4, value: "Patrik Sjölin 2" },
-];
+// const hashValues = [
+//   { id: 3, value: "Fredrik Sundqvist 2" },
+//   { id: 4, value: "Patrik Sjölin 2" },
+// ];
 
 //Add https to link if https is not present
 const Link = Quill.import("formats/link");
@@ -55,31 +55,31 @@ Quill.register("modules/imageResize", ImageResize);
 // ];
 // Quill.register(Font, true);
 
-const mention = {
-  allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-  mentionDenotationChars: ["#"],
-  linkTarget: "_blank",
-  source: function (
-    searchTerm: string,
-    renderList: (v: any, s: string) => void,
-    mentionChar: string
-  ) {
-    let values;
+// const mention = {
+//   allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
+//   mentionDenotationChars: ["#"],
+//   linkTarget: "_blank",
+//   source: function (
+//     searchTerm: string,
+//     renderList: (v: any, s: string) => void,
+//     mentionChar: string
+//   ) {
+//     let values;
 
-    if (mentionChar === "#") {
-      values = hashValues;
-    }
-    if (searchTerm.length === 0) {
-      renderList(values, searchTerm);
-    } else {
-      const matches = [];
-      for (let i = 0; i < values.length; i++)
-        if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase()))
-          matches.push(values[i]);
-      renderList(matches, searchTerm);
-    }
-  },
-};
+//     if (mentionChar === "#") {
+//       values = hashValues;
+//     }
+//     if (searchTerm.length === 0) {
+//       renderList(values, searchTerm);
+//     } else {
+//       const matches = [];
+//       for (let i = 0; i < values.length; i++)
+//         if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase()))
+//           matches.push(values[i]);
+//       renderList(matches, searchTerm);
+//     }
+//   },
+// };
 
 const toolbarOptions = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -110,7 +110,7 @@ const _modules = {
   "emoji-toolbar": true,
   "emoji-textarea": false,
   "emoji-shortname": true,
-  mention,
+//   mention,
   clipboard: {
     // toggle to add extra line breaks when pasting HTML:
     matchVisual: false,
@@ -135,13 +135,14 @@ const Editor = (props: { getData: (data: string) => void }) => {
   return (
     <>
       <ReactQuill
-      className={styles['editor']}
+        className={styles['editor']}
         theme="snow"
         value={value}
         onChange={(v) => handleRteData(v)}
         modules={_modules}
         // formats={formats}
         placeholder="Please provide the content of your blog here"
+        tabIndex={1}
       />
     </>
   );
