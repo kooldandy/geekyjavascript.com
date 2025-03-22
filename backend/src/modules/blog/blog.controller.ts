@@ -10,6 +10,7 @@ import {
   Patch,
   Query,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,11 +19,13 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { BlogsService } from './blog.service';
 import { Blog } from './schemas/blog.schema';
 import { CreateBlogDto } from './dto/blog.dto';
 import { BlogQueryDto } from './dto/query.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags(Blog.name)
 @Controller(Blog.name.toLowerCase())
@@ -59,6 +62,8 @@ export class BlogsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({
     status: 201,
@@ -71,6 +76,8 @@ export class BlogsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiResponse({
     status: 202,
@@ -87,6 +94,8 @@ export class BlogsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiResponse({
     status: 202,

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import databaseConfig from './config';
-
-const dbConfig = databaseConfig().database;
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -13,13 +11,16 @@ const dbConfig = databaseConfig().database;
     //   lazyConnection: true,
     // }),
     MongooseModule.forRootAsync({
-      useFactory: async () => ({
-        uri: dbConfig.host,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('HOST'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        dbName: 'geekyjavascriptdb',
+        dbName: configService.get<string>('DB_NAME'),
       }),
+      inject: [ConfigService],
     }),
   ],
+  exports: [MongooseModule],
 })
 export class DatabaseModule {}
