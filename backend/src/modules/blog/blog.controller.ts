@@ -8,6 +8,8 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,22 +17,36 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { BlogsService } from './blog.service';
 import { Blog } from './schemas/blog.schema';
 import { CreateBlogDto } from './dto/blog.dto';
+import { BlogQueryDto } from './dto/query.dto';
 
 @ApiTags(Blog.name)
 @Controller(Blog.name.toLowerCase())
 export class BlogsController {
-  constructor(private readonly blogssService: BlogsService) {}
+  constructor(private readonly blogsService: BlogsService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get blog list' })
-  @ApiOkResponse({ type: [CreateBlogDto] })
-  async findAll() {
-    return this.blogssService.findAll();
+  @ApiOperation({
+    summary: 'Get blog list with pagination, sorting and filtering',
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] })
+  @ApiQuery({ name: 'sortBy', required: false, type: String })
+  @ApiOkResponse({
+    type: [CreateBlogDto],
+    description: 'Returns paginated blogs with total count',
+  })
+  async findAll(
+    @Query(new ValidationPipe({ transform: true })) query: BlogQueryDto,
+  ) {
+    return this.blogsService.findAll(query);
   }
 
   @Get(':id')
@@ -39,7 +55,7 @@ export class BlogsController {
   @ApiParam({ name: 'id', description: 'id of blog' })
   @ApiOkResponse({ type: CreateBlogDto })
   async findOne(@Param('id') id: string) {
-    return this.blogssService.findOne(id);
+    return this.blogsService.findOne(id);
   }
 
   @Post()
@@ -50,8 +66,8 @@ export class BlogsController {
     type: CreateBlogDto,
   })
   @ApiOperation({ summary: 'Create one blog' })
-  async create(@Body() createCatDto: CreateBlogDto) {
-    await this.blogssService.create(createCatDto);
+  async create(@Body(new ValidationPipe()) createBlogDto: CreateBlogDto) {
+    return this.blogsService.create(createBlogDto);
   }
 
   @Patch(':id')
@@ -62,9 +78,12 @@ export class BlogsController {
     type: CreateBlogDto,
   })
   @ApiParam({ name: 'id', description: 'id of blog' })
-  @ApiOperation({ summary: 'Update one blog by id ( all params )' })
-  async update(@Body() createCatDto: CreateBlogDto) {
-    await this.blogssService.create(createCatDto);
+  @ApiOperation({ summary: 'Update one blog by id' })
+  async update(
+    @Param('id') id: string,
+    @Body(new ValidationPipe()) updateBlogDto: CreateBlogDto,
+  ) {
+    return this.blogsService.update(id, updateBlogDto);
   }
 
   @Delete(':id')
@@ -76,6 +95,6 @@ export class BlogsController {
   @ApiParam({ name: 'id', description: 'id of blog' })
   @ApiOperation({ summary: 'Delete one blog by id' })
   async delete(@Param('id') id: string) {
-    return this.blogssService.delete(id);
+    return this.blogsService.delete(id);
   }
 }
