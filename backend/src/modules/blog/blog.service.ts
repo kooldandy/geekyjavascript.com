@@ -1,18 +1,19 @@
 import { Model } from 'mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { BlogType, Blog } from './schemas/blog.schema';
-import { CreateBlogDto } from './dto/blog.dto';
+import { BlogDocument, Blog } from './schemas/blog.schema';
+import { BlogResponseDto, CreateBlogDto, UpdateBlogDto } from './dto/blog.dto';
 import { BlogQueryDto, SortOrder } from './dto/query.dto';
 
 @Injectable()
 export class BlogsService {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogType>) {}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
 
-  async create(createBlogDto: CreateBlogDto): Promise<BlogType> {
+  async create(createBlogDto: CreateBlogDto): Promise<BlogResponseDto> {
     try {
       const createdBlog = new this.blogModel(createBlogDto);
-      return await createdBlog.save();
+      const savedBlog = await createdBlog.save();
+      return savedBlog.toObject();
     } catch (error) {
       throw new Error(`Failed to create blog: ${error.message}`);
     }
@@ -20,7 +21,7 @@ export class BlogsService {
 
   async findAll(
     query: BlogQueryDto,
-  ): Promise<{ blogs: BlogType[]; total: number }> {
+  ): Promise<{ blogs: BlogResponseDto[]; total: number }> {
     try {
       const {
         page = 1,
@@ -54,19 +55,20 @@ export class BlogsService {
         this.blogModel.countDocuments(queryBuilder.getQuery()),
       ]);
 
-      return { blogs, total };
+      const formattedBlogs = blogs.map(blog => blog.toObject());
+      return { blogs: formattedBlogs, total };
     } catch (error) {
       throw new Error(`Failed to fetch blogs: ${error.message}`);
     }
   }
 
-  async findOne(id: string): Promise<BlogType> {
+  async findOne(id: string): Promise<BlogResponseDto> {
     try {
       const blog = await this.blogModel.findOne({ _id: id }).exec();
       if (!blog) {
         throw new NotFoundException(`Blog with ID ${id} not found`);
       }
-      return blog;
+      return blog.toObject();
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -75,7 +77,7 @@ export class BlogsService {
     }
   }
 
-  async update(id: string, updateBlogDto: CreateBlogDto): Promise<BlogType> {
+  async update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogResponseDto> {
     try {
       const updatedBlog = await this.blogModel
         .findByIdAndUpdate(id, updateBlogDto, { new: true })
@@ -83,7 +85,7 @@ export class BlogsService {
       if (!updatedBlog) {
         throw new NotFoundException(`Blog with ID ${id} not found`);
       }
-      return updatedBlog;
+      return updatedBlog.toObject();
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -92,13 +94,13 @@ export class BlogsService {
     }
   }
 
-  async delete(id: string): Promise<BlogType> {
+  async delete(id: string): Promise<null> {
     try {
       const deletedBlog = await this.blogModel.findByIdAndDelete(id).exec();
       if (!deletedBlog) {
         throw new NotFoundException(`Blog with ID ${id} not found`);
       }
-      return deletedBlog;
+      return null;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

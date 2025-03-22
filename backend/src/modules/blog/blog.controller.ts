@@ -23,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { BlogsService } from './blog.service';
 import { Blog } from './schemas/blog.schema';
-import { CreateBlogDto } from './dto/blog.dto';
+import { BlogResponseDto, CreateBlogDto, UpdateBlogDto } from './dto/blog.dto';
 import { BlogQueryDto } from './dto/query.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -31,6 +31,22 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller(Blog.name.toLowerCase())
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.',
+    type: BlogResponseDto,
+  })
+  @ApiOperation({ summary: 'Create one blog' })
+  async create(
+    @Body(new ValidationPipe()) createBlogDto: CreateBlogDto,
+  ): Promise<BlogResponseDto> {
+    return this.blogsService.create(createBlogDto);
+  }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -43,12 +59,12 @@ export class BlogsController {
   @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] })
   @ApiQuery({ name: 'sortBy', required: false, type: String })
   @ApiOkResponse({
-    type: [CreateBlogDto],
+    type: [BlogResponseDto],
     description: 'Returns paginated blogs with total count',
   })
   async findAll(
     @Query(new ValidationPipe({ transform: true })) query: BlogQueryDto,
-  ) {
+  ): Promise<{ blogs: BlogResponseDto[]; total: number }> {
     return this.blogsService.findAll(query);
   }
 
@@ -56,23 +72,9 @@ export class BlogsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get one blog by id' })
   @ApiParam({ name: 'id', description: 'id of blog' })
-  @ApiOkResponse({ type: CreateBlogDto })
-  async findOne(@Param('id') id: string) {
+  @ApiOkResponse({ type: BlogResponseDto })
+  async findOne(@Param('id') id: string): Promise<BlogResponseDto> {
     return this.blogsService.findOne(id);
-  }
-
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiResponse({
-    status: 201,
-    description: 'The record has been successfully created.',
-    type: CreateBlogDto,
-  })
-  @ApiOperation({ summary: 'Create one blog' })
-  async create(@Body(new ValidationPipe()) createBlogDto: CreateBlogDto) {
-    return this.blogsService.create(createBlogDto);
   }
 
   @Patch(':id')
@@ -82,14 +84,14 @@ export class BlogsController {
   @ApiResponse({
     status: 202,
     description: 'The record has been successfully updated.',
-    type: CreateBlogDto,
+    type: BlogResponseDto,
   })
   @ApiParam({ name: 'id', description: 'id of blog' })
   @ApiOperation({ summary: 'Update one blog by id' })
   async update(
     @Param('id') id: string,
-    @Body(new ValidationPipe()) updateBlogDto: CreateBlogDto,
-  ) {
+    @Body(new ValidationPipe()) updateBlogDto: UpdateBlogDto,
+  ): Promise<BlogResponseDto> {
     return this.blogsService.update(id, updateBlogDto);
   }
 
@@ -103,7 +105,7 @@ export class BlogsController {
   })
   @ApiParam({ name: 'id', description: 'id of blog' })
   @ApiOperation({ summary: 'Delete one blog by id' })
-  async delete(@Param('id') id: string) {
+  async delete(@Param('id') id: string): Promise<null> {
     return this.blogsService.delete(id);
   }
 }
