@@ -21,7 +21,7 @@ export class BlogsService {
 
   async findAll(
     query: BlogQueryDto,
-  ): Promise<{ blogs: BlogResponseDto[]; total: number }> {
+  ): Promise<{ blogs: BlogDocument[]; total: number }> {
     try {
       const {
         page = 1,

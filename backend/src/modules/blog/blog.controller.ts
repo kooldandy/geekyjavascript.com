@@ -64,7 +64,7 @@ export class BlogsController {
   })
   async findAll(
     @Query(new ValidationPipe({ transform: true })) query: BlogQueryDto,
-  ): Promise<{ blogs: BlogResponseDto[]; total: number }> {
+  ): Promise<{ blogs: any[]; total: number }> {
     return this.blogsService.findAll(query);
   }
 

@@ -4,12 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    // MongooseModule.forRoot(dbConfig.host, {
-    //   retryAttempts: 2,
-    //   retryDelay: 1000,
-    //   connectionName: 'dsds',
-    //   lazyConnection: true,
-    // }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

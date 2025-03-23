@@ -10,8 +10,8 @@ export class SwaggerConfig {
       .setDescription('The Geeky JavaScript API documentation')
       .setVersion('1.0')
       .addBearerAuth()
-      .addTag('auth')
-      .addTag('blog')
+      // .addTag('auth')
+      // .addTag('blog')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
