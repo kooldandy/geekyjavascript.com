@@ -9,6 +9,6 @@
   "workspaces": [
     "website", 
     "backend",
-    "framework"
+    "admin"
  ]
 }
